@@ -1,67 +1,4 @@
-resource "aws_route53_record" "this" {
 
-  zone_id = data.aws_route53_zone.this.zone_id
-  name    = local.fqdn
-  type    = "A"
-  alias {
-    name                   = aws_cloudfront_distribution.this.domain_name
-    zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
-
-resource "aws_s3_bucket" "this_website" {
-  bucket = replace("${var.domain}-website", "_", "-")
-
-  tags = {
-    Name    = "${local.fqdn} Website"
-    Website = true
-  }
-}
-
-resource "aws_s3_bucket_website_configuration" "this" {
-  bucket = aws_s3_bucket.this_website.id
-
-  index_document {
-    suffix = var.index
-  }
-
-  error_document {
-    key = "error.html"
-  }
-}
-
-resource "aws_s3_bucket_policy" "public_read" {
-  bucket = aws_s3_bucket.this_website.id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Sid       = "AllowPublicRead"
-      Effect    = "Allow"
-      Principal = "*"
-      Action    = "s3:GetObject"
-      Resource  = "${aws_s3_bucket.this_website.arn}/*"
-    }]
-  })
-}
-
-resource "aws_s3_bucket_ownership_controls" "this" {
-  bucket = aws_s3_bucket.this_website.id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "this_website" {
-  bucket = aws_s3_bucket.this_website.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
 
 resource "aws_acm_certificate" "this" {
   provider          = aws.us-east-1
@@ -97,6 +34,7 @@ data "aws_cloudfront_cache_policy" "this" {
 }
 
 resource "aws_cloudfront_distribution" "this" {
+
   origin {
     domain_name = aws_s3_bucket_website_configuration.this.website_endpoint
     origin_id   = aws_s3_bucket.this_website.bucket_regional_domain_name
@@ -122,9 +60,6 @@ resource "aws_cloudfront_distribution" "this" {
 
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
   }
 
   restrictions {
