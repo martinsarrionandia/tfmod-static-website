@@ -25,3 +25,17 @@ variable "content_path" {
   description = "Local content directory"
   type        = string
 }
+
+variable "mime_types" {
+  type = map(string)
+  default = {
+    html = "text/html"
+    css  = "text/css"
+    js   = "application/javascript"
+    png  = "image/png"
+    jpg  = "image/jpeg"
+    svg  = "image/svg+xml"
+    json = "application/json"
+    txt  = "text/plain"
+  }
+}
