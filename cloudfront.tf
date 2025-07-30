@@ -1,5 +1,3 @@
-
-
 resource "aws_acm_certificate" "this" {
   provider          = aws.us-east-1
   domain_name       = local.fqdn
@@ -39,7 +37,6 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name = aws_s3_bucket_website_configuration.this.website_endpoint
     origin_id   = aws_s3_bucket.this_website.bucket_regional_domain_name
 
-
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -52,12 +49,10 @@ resource "aws_cloudfront_distribution" "this" {
   enabled = true
 
   default_cache_behavior {
-    cache_policy_id  = data.aws_cloudfront_cache_policy.this.id
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = aws_s3_bucket.this_website.bucket_regional_domain_name
-
-
+    cache_policy_id        = data.aws_cloudfront_cache_policy.this.id
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = aws_s3_bucket.this_website.bucket_regional_domain_name
     viewer_protocol_policy = "redirect-to-https"
   }
 

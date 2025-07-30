@@ -43,8 +43,7 @@ resource "aws_s3_bucket_ownership_controls" "this" {
 }
 
 resource "aws_s3_bucket_public_access_block" "this_website" {
-  bucket = aws_s3_bucket.this_website.id
-
+  bucket                  = aws_s3_bucket.this_website.id
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
