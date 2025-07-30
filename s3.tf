@@ -15,7 +15,7 @@ resource "aws_s3_bucket_website_configuration" "this" {
   }
 
   error_document {
-    key = "error.html"
+    key = var.error
   }
 }
 

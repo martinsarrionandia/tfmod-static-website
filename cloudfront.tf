@@ -48,7 +48,6 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-
   aliases = [local.fqdn]
   enabled = true
 
